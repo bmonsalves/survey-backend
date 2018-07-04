@@ -1,0 +1,23 @@
+{
+  "name": "surveys-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "DEBUG=surveys* babel-node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2017": "^6.24.1",
+    "body-parser": "^1.18.3",
+    "concurrently": "^3.6.0",
+    "debug": "^3.1.0",
+    "express": "^4.16.3",
+    "nodemon": "^1.17.5"
+  }
+}
