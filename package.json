@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "DEBUG=surveys* babel-node index.js"
+    "start": "NODE_ENV=development DEBUG=surveys* nodemon index.js --exec babel-node"
   },
   "author": "",
   "license": "ISC",
