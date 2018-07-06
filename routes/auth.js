@@ -21,6 +21,8 @@ function comparePasswords(providedPassword, userPassword) {
     return providedPassword === userPassword
 }
 
+const createToken = (user) => jwt.sign({ user }, secret, { expiresIn: 86400 });
+
 app.post('/signin', (req, res, next) => {
     const { email, password } = req.body;
     const user = findUserByEmail(email);
@@ -32,10 +34,11 @@ app.post('/signin', (req, res, next) => {
 
     if (!comparePasswords(password, user.password)) {
         debug(`Passwords do not match: ${password} !== ${user.password}`);
-        return handleLoginFailed(res);
+        return handleLoginFailed(res,`usuario o contraseña incorrecto`);
     }
 
-    const token = jwt.sign({ user }, secret, { expiresIn: 86400 });
+    const token = createToken(user);
+
     res.status(200).json({
         message: 'Login succeded',
         token: token,
@@ -46,10 +49,33 @@ app.post('/signin', (req, res, next) => {
     })
 });
 
-function handleLoginFailed(res) {
+
+app.post('/signup', (req, res) => {
+    const { name, lastname, email, password } = req.body;
+    const user = {
+        _id: +new Date(),
+        name,
+        lastname,
+        email,
+        password
+    };
+    debug(`Creating new user: ${user}`);
+    users.push(user);
+    const token = createToken(user);
+    res.status(201).json({
+        message: 'User saved',
+        token,
+        userId: user._id,
+        name,
+        lastname,
+        email
+    })
+});
+
+function handleLoginFailed(res,message) {
     return res.status(401).json({
         message: 'Login failed',
-        error: 'Email and password don\'t match'
+        error: message || 'Email and password don\'t match'
     })
 }
 
