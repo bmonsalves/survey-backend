@@ -3,8 +3,6 @@ import { auth } from "../api";
 import Debug from 'debug'
 import { handleError } from "../utils";
 
-
-
 const app = express.Router();
 const debug = new Debug('surveys:auth');
 

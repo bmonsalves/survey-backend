@@ -12,6 +12,7 @@ const debug = new Debug('surveys:api:auth');
 const createToken = (user) => jwt.sign({ user }, secret, { expiresIn: 86400 });
 
 export default {
+
     signin: async (userData) => {
         const { email, password } = userData;
         const user = await User.findOne({ email });
