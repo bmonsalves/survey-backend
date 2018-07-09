@@ -1,66 +1,44 @@
 import express from 'express'
-import jwt from 'jsonwebtoken';
+import { auth } from "../api";
 import Debug from 'debug'
-import { secret } from '../config';
-import { findUserByEmail, users } from '../middleware';
+import { handleError } from "../utils";
+
 
 
 const app = express.Router();
 const debug = new Debug('surveys:auth');
 
-function comparePasswords(providedPassword, userPassword) {
-    return providedPassword === userPassword
-}
+app.post('/signin', async (req, res) => {
 
-const createToken = (user) => jwt.sign({ user }, secret, { expiresIn: 86400 });
+    debug('sign in');
 
-app.post('/signin', (req, res, next) => {
-    const { email, password } = req.body;
-    const user = findUserByEmail(email);
+    try {
+        const u = await auth.signin(req.body);
 
-    if (!user) {
-        debug(`User with email ${email} not found`);
-        return handleLoginFailed(res);
+        if (u.hasOwnProperty('error')){
+            return handleLoginFailed(res, u.error)
+        }
+        res.status(200).json(u)
+
+    } catch (error) {
+        handleError(error,'no fue posible iniciar sesion', res)
     }
 
-    if (!comparePasswords(password, user.password)) {
-        debug(`Passwords do not match: ${password} !== ${user.password}`);
-        return handleLoginFailed(res,`usuario o contraseña incorrecto`);
-    }
-
-    const token = createToken(user);
-
-    res.status(200).json({
-        message: 'Login succeded',
-        token: token,
-        userId: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-    })
 });
 
 
-app.post('/signup', (req, res) => {
-    const { name, lastname, email, password } = req.body;
-    const user = {
-        _id: +new Date(),
-        name,
-        lastname,
-        email,
-        password
-    };
-    debug(`Creating new user: ${user}`);
-    users.push(user);
-    const token = createToken(user);
-    res.status(201).json({
-        message: 'User saved',
-        token,
-        userId: user._id,
-        name,
-        lastname,
-        email
-    })
+app.post('/signup', async (req, res) => {
+
+    debug('sign up');
+
+    try {
+        const u = await auth.signup(req.body);
+        res.status(200).json(u)
+
+    } catch (error) {
+        handleError(error,'no fue posible iniciar sesion', res)
+    }
+
 });
 
 function handleLoginFailed(res,message) {
