@@ -1,14 +1,15 @@
 import Debug from 'debug'
 import { User } from '../models'
 import jwt from "jsonwebtoken";
-import {secret} from "../config";
+import {secret, charEncrypt} from "../config";
+import {
+    hashSync as hash,
+    compareSync as comparePasswords
+} from 'bcryptjs'
+
 const debug = new Debug('surveys:api:auth');
 
 const createToken = (user) => jwt.sign({ user }, secret, { expiresIn: 86400 });
-
-function comparePasswords(providedPassword, userPassword) {
-    return providedPassword === userPassword
-}
 
 export default {
     signin: async (userData) => {
@@ -49,7 +50,7 @@ export default {
             name,
             lastname,
             email,
-            password
+            password: hash(password, charEncrypt)
         });
         debug(`Creating new user: ${u}`);
         const user = await u.save();

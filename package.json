@@ -24,6 +24,7 @@
     "nodemon": "^1.17.5"
   },
   "devDependencies": {
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "bcryptjs": "^2.4.3"
   }
 }
